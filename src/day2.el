@@ -16,12 +16,7 @@
                      (split-string str ",")))
            (split-string (substring line (match-end 0)) ";"))))
 
-(defun parse-all-games (lst)
-  (if (null lst)
-      nil
-    (cons (parse-game (car lst)) (parse-all-games (cdr lst)))))
-
-(defvar game-alist (parse-all-games data))
+(defvar game-alist (mapcar #'parse-game data))
 
 (defun color-maxes (game)
   (let ((rounds (cdr game))
@@ -40,8 +35,7 @@
 ;; Part 1
 (sum (mapcar #'car
              (seq-filter (lambda (max-pair)
-                           (let ((id (car max-pair))
-                                 (max-alist (cdr max-pair)))
+                           (let ((max-alist (cdr max-pair)))
                              (and (<= (alist-get 'red max-alist) 12)
                                   (<= (alist-get 'green max-alist) 13)
                                   (<= (alist-get 'blue max-alist) 14))))
