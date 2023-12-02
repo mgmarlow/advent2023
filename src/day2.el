@@ -32,23 +32,22 @@
           (push (cons c (alist-get c round)) rst))))
     (cons (car game) rst)))
 
-;; Part 1
-(let ((sum 0))
-  (dolist (max-pair (mapcar #'color-maxes game-alist))
-    (let ((id (car max-pair))
-          (max-alist (cdr max-pair)))
-      (when (and (<= (alist-get 'red max-alist) 12)
-                 (<= (alist-get 'green max-alist) 13)
-                 (<= (alist-get 'blue max-alist) 14))
-        (setq sum (+ sum id)))))
-  sum)
-
-;; Part 2
 (defun sum (lst)
   (if (null lst)
       0
     (+ (car lst) (sum (cdr lst)))))
 
+;; Part 1
+(sum (mapcar #'car
+             (seq-filter (lambda (max-pair)
+                           (let ((id (car max-pair))
+                                 (max-alist (cdr max-pair)))
+                             (and (<= (alist-get 'red max-alist) 12)
+                                  (<= (alist-get 'green max-alist) 13)
+                                  (<= (alist-get 'blue max-alist) 14))))
+                         (mapcar #'color-maxes game-alist))))
+
+;; Part 2
 (sum (mapcar (lambda (max-pair)
                (let ((max-alist (cdr max-pair)))
                  (*
