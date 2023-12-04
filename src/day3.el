@@ -23,17 +23,53 @@
   (not (null (string-match-p "^[0-9]+$" s))))
 
 (defun s-symbolic? (s)
-  'stub)
+  "Is S a symbol?"
+  (declare (pure t) (side-effect-free t))
+  (not (null (string-match-p "^[\$\+\#\*\/\@\=\%\&\-]+$" s))))
 
-(defun range-borders-symbol? (i j r)
-  'stub)
+(defun within-bounds? (i j vec)
+  (and (>= i 0)
+       (>= j 0)
+       (< i (length (aref vec 0)))
+       (< j (length vec))))
 
+(defun coords-to-check (i j)
+  `((,(- i 1) . ,(- j 1))
+    (,(- i 1) . ,j)
+    (,(- i 1) . ,(+ j 1))
+    (,i . ,(- j 1))
+    (,i . ,(+ j 1))
+    (,(+ i 1) . ,(- j 1))
+    (,(+ i 1) . ,j)
+    (,(+ i 1) . ,(+ j 1))))
+
+(defun el-get (x y)
+  (aref (aref data-array y) x))
+
+(defun range-borders-symbol? (startx endx y)
+  (let (any-border-p)
+    (dotimes (xi (+ (- endx startx) 1))
+      (dolist (coord (coords-to-check (+ startx xi) y))
+        (let ((coord-x (car coord))
+              (coord-y (cdr coord)))
+          (when (and (within-bounds? coord-x coord-y data-array)
+                     (s-symbolic? (el-get coord-x coord-y)))
+            (setq any-border-p t)))))
+    any-border-p))
+
+;; Part 1
 (defun part-numbers ()
-  (let (rst (i 0))
-    ;; swap (car data) with the dolist
-    (while (string-match "[0-9]+" (car data) i)
-      (let ((starti (match-beginning 0))
-            (endi (- (match-end 0) 1)))
-        ;; search for symbols here using starti, endi indices
-        (message "%d %d" starti endi))
-      (setq i (match-end 0)))))
+  (let (rst)
+    (dotimes (rowi (length data))
+      (let ((row (elt data rowi)) (i 0))
+        (while (string-match "[0-9]+" row i)
+          (let ((starti (match-beginning 0))
+                (endi (- (match-end 0) 1)))
+            (when (range-borders-symbol? starti endi rowi)
+              (push (string-to-number (match-string 0 row)) rst)))
+          (setq i (match-end 0)))))
+    rst))
+
+(defun sum (lst) (apply '+ lst))
+
+(sum (part-numbers))
