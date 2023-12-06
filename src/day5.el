@@ -39,21 +39,52 @@
        (>= x range)))
 
 (defun destination (x map)
-  (let ((matching-range (seq-find
-                         (lambda (range)
-                           (apply #'within-range? `(,x ,@(cdr range))))
-                         (cdr map))))
-    (if (null matching-range)
-        x
-      (compute-destination x matching-range))))
+  (if-let ((matching-range (seq-find
+                            (lambda (range)
+                              (apply #'within-range? `(,x ,@(cdr range))))
+                            (cdr map))))
+      (compute-destination x matching-range)
+    x))
 
-(defun traverse-maps (seed maps)
-  (if (null maps)
-      seed
-    (traverse-maps (destination seed (car maps)) (cdr maps))))
+(defun traverse-maps-dest (seed maps)
+  (seq-reduce (lambda (acc map) (destination acc map)) maps seed))
 
 ;; Part 1
-(apply #'min (mapcar (lambda (seed) (traverse-maps seed maps)) seeds))
+(apply #'min (mapcar (lambda (seed) (traverse-maps-dest seed maps)) seeds))
 
 ;; Part 2
-;; todo
+(defun compute-source (x map-range)
+  (+ (elt map-range 1) (- x (elt map-range 0))))
+
+(defun source (x map)
+  (if-let ((matching-range (seq-find
+                            (lambda (range)
+                              (apply #'within-range? `(,x ,(car range) ,(caddr range))))
+                            (cdr map))))
+      (compute-source x matching-range)
+    x))
+
+(defun traverse-maps-source (loc maps)
+  (seq-reduce (lambda (acc map) (source acc map)) maps loc))
+
+(defun group-by-twos (lst)
+  (if (null lst)
+      nil
+    (cons `(,(car lst) ,(cadr lst)) (group-by-twos (cddr lst)))))
+
+(defvar seeds-in-twos (group-by-twos seeds))
+
+(defun seeds-contains-p (n)
+  (seq-find (lambda (seed-range)
+              (within-range? n (car seed-range) (cadr seed-range)))
+            seeds-in-twos))
+
+(defvar seed-maps (reverse maps))
+
+(let (smallest-loc (i 0))
+  (while (null smallest-loc)
+    (let ((maybe-seed (traverse-maps-source i seed-maps)))
+      (when (seeds-contains-p maybe-seed)
+        (setq smallest-loc i)))
+    (setq i (+ i 1)))
+  smallest-loc)
