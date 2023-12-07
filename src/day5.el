@@ -1,3 +1,7 @@
+;;; day5.el --- If You Give A Seed A Fertilizer -*- lexical-binding: t; -*-
+
+;;; Code:
+
 (defun read-lines (file)
   (with-temp-buffer
     (insert-file-contents file)
@@ -88,3 +92,5 @@
         (setq smallest-loc i)))
     (setq i (+ i 1)))
   smallest-loc)
+
+;;; day5.el ends here

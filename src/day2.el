@@ -1,3 +1,7 @@
+;;; day2.el --- Cube Conundrum -*- lexical-binding: t; -*-
+
+;;; Code:
+
 (defun read-lines (file)
   (with-temp-buffer
     (insert-file-contents file)
@@ -49,3 +53,5 @@
                   (alist-get 'green max-alist 1)
                   (alist-get 'blue max-alist 1))))
              (mapcar #'color-maxes game-alist)))
+
+;;; day2.el ends here

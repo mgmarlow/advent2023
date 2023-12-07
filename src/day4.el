@@ -1,3 +1,7 @@
+;;; day4.el --- Scratchcards -*- lexical-binding: t; -*-
+
+;;; Code:
+
 (defun read-lines (file)
   (with-temp-buffer
     (insert-file-contents file)
@@ -53,3 +57,5 @@
        (score (cdr lst)))))
 
 (- (score (mapcar #'car cards)) 1)
+
+;;; day4.el ends here

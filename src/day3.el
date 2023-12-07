@@ -1,3 +1,7 @@
+;;; day3.el --- Gear Ratios -*- lexical-binding: t; -*-
+
+;;; Code:
+
 (defun read-lines (file)
   (with-temp-buffer
     (insert-file-contents file)
@@ -73,3 +77,5 @@
 (defun sum (lst) (apply '+ lst))
 
 (sum (part-numbers))
+
+;;; day3.el ends here

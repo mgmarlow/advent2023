@@ -1,3 +1,7 @@
+;;; day6.el --- Wait For It -*- lexical-binding: t; -*-
+
+;;; Code:
+
 (defun distance (held max)
   (* (- max held) held))
 
@@ -24,3 +28,5 @@
 
 ;; Part 2
 (num-prs 42686985 284100511221341)
+
+;;; day6.el ends here

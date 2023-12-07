@@ -1,3 +1,7 @@
+;;; day1.el --- Trebuchet?! -*- lexical-binding: t; -*-
+
+;;; Code:
+
 (defun read-lines (file)
   (with-temp-buffer
     (insert-file-contents file)
@@ -55,3 +59,4 @@
                                   "\\)")))
   (calibration-sum data))
 
+;;; day1.el ends here
