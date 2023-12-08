@@ -32,14 +32,14 @@
     (_ (error "Invalid instruction"))))
 
 ;; Part 1
-(defun traverse (start done)
+(defun traverse (done start)
   (let ((node start) (i 0))
     (while (not (funcall done node))
       (setq node (destination node i))
       (setq i (+ i 1)))
     i))
 
-(traverse 'AAA (lambda (node) (eq node 'ZZZ)))
+(traverse (lambda (node) (eq node 'ZZZ)) 'AAA)
 
 ;; Part 2
 (require 's)
@@ -61,14 +61,13 @@
 (defun lcm (a b)
   (/ (* a b) (gcd a b)))
 
-(defun traverse-b (starts)
-  (seq-reduce
-   #'lcm
-   (mapcar (lambda (start)
-             (traverse start #'ending-node?))
-           starts)
-   1))
+(defun traverse-all (starts done)
+  (mapcar (apply-partially #'traverse done) starts))
 
-(traverse-b (seq-filter #'starting-node? (alist-keys nodes)))
+(seq-reduce #'lcm
+            (traverse-all
+             (seq-filter #'starting-node? (alist-keys nodes))
+             #'ending-node?)
+            1)
 
 ;;; day8.el ends here
