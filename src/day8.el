@@ -32,14 +32,14 @@
     (_ (error "Invalid instruction"))))
 
 ;; Part 1
-(defun traverse ()
-  (let ((node 'AAA) (i 0))
-    (while (not (eq node 'ZZZ))
+(defun traverse (start done)
+  (let ((node start) (i 0))
+    (while (not (funcall done node))
       (setq node (destination node i))
       (setq i (+ i 1)))
     i))
 
-(traverse)
+(traverse 'AAA (lambda (node) (eq node 'ZZZ)))
 
 ;; Part 2
 (require 's)
@@ -51,7 +51,7 @@
   (s-ends-with? "A" (symbol-name sym)))
 
 (defun alist-keys (alist)
-  (mapcar 'car alist))
+  (mapcar #'car alist))
 
 (defun gcd (a b)
   (if (= b 0)
@@ -61,17 +61,14 @@
 (defun lcm (a b)
   (/ (* a b) (gcd a b)))
 
-(defun traverse-b ()
-  (let ((starts (seq-filter #'starting-node? (alist-keys nodes)))
-        rst)
-    (dolist (start starts)
-      (let ((cur start) (i 0))
-        (while (not (ending-node? cur))
-          (setq cur (destination cur i))
-          (setq i (+ i 1)))
-        (push i rst)))
-    (seq-reduce #'lcm rst 1)))
+(defun traverse-b (starts)
+  (seq-reduce
+   #'lcm
+   (mapcar (lambda (start)
+             (traverse start #'ending-node?))
+           starts)
+   1))
 
-(traverse-b)
+(traverse-b (seq-filter #'starting-node? (alist-keys nodes)))
 
 ;;; day8.el ends here
